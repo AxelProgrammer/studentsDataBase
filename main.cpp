@@ -2,6 +2,13 @@
 #include <vector>
 #include <string>
 
+#ifdef _WIN32
+#include <windows.h>
+#endif
+
+// g++ -o main.exe main.cpp
+// main.exe
+
 struct Student {
     std::string name;
     int age;
@@ -37,6 +44,12 @@ void displayStudents(const std::vector<Student>& database) {
 }
 
 int main() {
+
+    #ifdef _WIN32
+        SetConsoleCP(65001);       
+        SetConsoleOutputCP(65001);
+    #endif
+
     std::vector<Student> database;
 
     int choice;
