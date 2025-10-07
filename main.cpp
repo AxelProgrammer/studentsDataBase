@@ -1,13 +1,14 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include <algorithm>
 
 #ifdef _WIN32
 #include <windows.h>
 #endif
 
 // g++ -o main.exe main.cpp
-// main.exe
+// .\main.exe
 
 struct Student {
     std::string name;
@@ -15,6 +16,19 @@ struct Student {
     std::string major;
     double gpa;
 };
+
+// Преобразование строки в нижний регистр
+std::string toLower(const std::string& str) {
+    std::string lower = str;
+    std::transform(lower.begin(), lower.end(), lower.begin(),
+                   [](unsigned char c){ return std::tolower(c); });
+    return lower;
+}
+
+// Проверка, содержится ли подстрока (без учёта регистра)
+bool containsIgnoreCase(const std::string& text, const std::string& pattern) {
+    return toLower(text).find(toLower(pattern)) != std::string::npos;
+}
 
 // Функция для добавления студента в базу данных
 void addStudent(std::vector<Student>& database) {
@@ -43,6 +57,21 @@ void displayStudents(const std::vector<Student>& database) {
     }
 }
 
+// Поиск по имени (без учёта регистра и по подстроке)
+void searchByName(const std::vector<Student>& database, const std::string& name) {
+    bool found = false;
+    for (const auto& s : database) {
+        if (containsIgnoreCase(s.name, name)) {
+            if (!found) std::cout << "🔍 Найденные студенты по имени '" << name << "':\n";
+            std::cout << "Имя: " << s.name << ", Возраст: " << s.age
+                      << ", Специальность: " << s.major << ", Средний балл: " << s.gpa << "\n";
+            found = true;
+        }
+    }
+    if (!found)
+        std::cout << "Студенты с именем, содержащим '" << name << "', не найдены.\n";
+}
+
 int main() {
 
     #ifdef _WIN32
@@ -57,6 +86,7 @@ int main() {
         std::cout << "Меню:\n";
         std::cout << "1. Добавить студента\n";
         std::cout << "2. Вывести список студентов\n";
+        std::cout << "3. Поиск по имени\n";
         std::cout << "0. Выход\n";
         std::cout << "Выберите действие: ";
         std::cin >> choice;
@@ -68,6 +98,13 @@ int main() {
             case 2:
                 displayStudents(database);
                 break;
+            case 3: {
+                std::string name;
+                std::cout << "Введите имя (или часть имени): ";
+                std::cin >> name;
+                searchByName(database, name);
+                break;
+            }
             case 0:
                 std::cout << "Выход из программы.\n";
                 break;
