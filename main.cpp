@@ -57,7 +57,7 @@ void displayStudents(const std::vector<Student>& database) {
     }
 }
 
-// Поиск по имени (без учёта регистра и по подстроке)
+// Поиск по имени
 void searchByName(const std::vector<Student>& database, const std::string& name) {
     bool found = false;
     for (const auto& s : database) {
@@ -70,6 +70,21 @@ void searchByName(const std::vector<Student>& database, const std::string& name)
     }
     if (!found)
         std::cout << "Студенты с именем, содержащим '" << name << "', не найдены.\n";
+}
+
+// Поиск по специальности
+void searchByMajor(const std::vector<Student>& database, const std::string& major) {
+    bool found = false;
+    for (const auto& s : database) {
+        if (containsIgnoreCase(s.major, major)) {
+            if (!found) std::cout << "Найденные студенты по специальности '" << major << "':\n";
+            std::cout << "Имя: " << s.name << ", Возраст: " << s.age
+                      << ", Специальность: " << s.major << ", Средний балл: " << s.gpa << "\n";
+            found = true;
+        }
+    }
+    if (!found)
+        std::cout << "Студенты со специальностью, содержащей '" << major << "', не найдены.\n";
 }
 
 int main() {
@@ -87,6 +102,7 @@ int main() {
         std::cout << "1. Добавить студента\n";
         std::cout << "2. Вывести список студентов\n";
         std::cout << "3. Поиск по имени\n";
+        std::cout << "4. Поиск по специальности\n";
         std::cout << "0. Выход\n";
         std::cout << "Выберите действие: ";
         std::cin >> choice;
@@ -103,6 +119,13 @@ int main() {
                 std::cout << "Введите имя (или часть имени): ";
                 std::cin >> name;
                 searchByName(database, name);
+                break;
+            }
+            case 4: {
+                std::string major;
+                std::cout << "Введите специальность (или часть названия): ";
+                std::cin >> major;
+                searchByMajor(database, major);
                 break;
             }
             case 0:
