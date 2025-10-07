@@ -9,20 +9,32 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # 1. Клонируем репозиторий
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Install GoogleTest
+      # 2. Устанавливаем компилятор, cmake и libgtest-dev
+      - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y libgtest-dev cmake g++
-          cd /usr/src/gtest
+          sudo apt-get install -y g++ cmake libgtest-dev
+
+      # 3. Компилируем GoogleTest (не копируем .a в /usr/lib)
+      - name: Build GoogleTest
+        run: |
+          cd /usr/src/googletest/googletest
           sudo cmake .
           sudo make
-          sudo cp *.a /usr/lib
 
+      # 4. Компилируем проект и линкуем с GoogleTest
       - name: Build project
-        run: g++ -std=c++17 student_lib.cpp tests.cpp -lgtest -lgtest_main -pthread -o test_program
+        run: |
+          g++ -std=c++17 \
+            student_lib.cpp tests.cpp \
+            /usr/src/googletest/googletest/libgtest.a \
+            /usr/src/googletest/googletest/libgtest_main.a \
+            -pthread -o test_program
 
+      # 5. Запускаем тесты
       - name: Run tests
         run: ./test_program
