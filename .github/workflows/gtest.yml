@@ -25,16 +25,16 @@ jobs:
           cd /usr/src/googletest
           sudo cmake .
           sudo make
-          # После сборки .a будут в /usr/src/googletest/googlemock/gtest/lib
-          ls -l googletest/build/lib  # проверить наличие libgtest.a
+          # статические библиотеки будут в /usr/src/googletest/lib/
+          ls -l lib
 
       # 4. Compile project with GoogleTest
       - name: Build project
         run: |
           g++ -std=c++17 \
             student_lib.cpp tests.cpp \
-            /usr/src/googletest/googletest/build/lib/libgtest.a \
-            /usr/src/googletest/googletest/build/lib/libgtest_main.a \
+            /usr/src/googletest/lib/libgtest.a \
+            /usr/src/googletest/lib/libgtest_main.a \
             -pthread -o test_program
 
       # 5. Run tests
