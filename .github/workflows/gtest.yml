@@ -1,0 +1,28 @@
+name: GoogleTest CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install GoogleTest
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libgtest-dev cmake g++
+          cd /usr/src/gtest
+          sudo cmake .
+          sudo make
+          sudo cp *.a /usr/lib
+
+      - name: Build project
+        run: g++ -std=c++17 student_lib.cpp tests.cpp -lgtest -lgtest_main -pthread -o test_program
+
+      - name: Run tests
+        run: ./test_program
